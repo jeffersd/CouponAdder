@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.144" tests="58" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64"/>
+    <property name="java.vm.version" value="24.65-b04"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/home/dillon/workspace/CouponAdder/lib/htmlunit/src/htmlunit-2.15/httpcomponents-client-4.3.3/httpclient"/>
+    <property name="java.runtime.version" value="1.7.0_65-b32"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Linux"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="3.13.0-39-generic"/>
+    <property name="user.home" value="/home/dillon"/>
+    <property name="user.timezone" value="America/Phoenix"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="user.name" value="dillon"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.x.jar"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/usr/lib/jvm/java-7-openjdk-amd64/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher install"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.7.0_65"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jfr.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase name="testConstructor" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.012"/>
+  <testcase name="testSecondDomainLevelCookieMatch2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testSecondDomainLevelCookieMatch3" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testInvalidSecondDomainLevelCookieMatch1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.007"/>
+  <testcase name="testInvalidSecondDomainLevelCookieMatch2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.003"/>
+  <testcase name="testMatchBlankPath" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testMatchNullCookieDomain" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testMatchNullCookiePath" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.004"/>
+  <testcase name="testCookieMatch1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieMatch2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMatch3" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMatch4" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMismatch1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMismatch2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMismatch3" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieMismatch4" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieMatch5" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieMismatch6" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testInvalidMatchDomain" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testGenericCookieFormatting" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.014"/>
+  <testcase name="testNullCookieValueFormatting" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testNullCookieValueFormattingCookieVersion1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.002"/>
+  <testcase name="testFormatSeveralCookies" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testKeepCloverHappy" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testInvalidInput" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testFormatCookieWithSpaceInValue" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testFormatCookieVersion0WithSpaceInValue" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testVersion1CookieWithInvalidExpires" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.058"/>
+  <testcase name="testParse1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParse2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testParse3" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testQuotedExpiresAttribute" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testSecurityError" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseSimple" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.002"/>
+  <testcase name="testParseSimple2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseNoName" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseNoValue" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithWhiteSpace" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithQuotes" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithPath" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithDomain" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithSecure" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testParseWithComment" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithExpires" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithAll" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.002"/>
+  <testcase name="testParseMultipleDifferentPaths" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseRelativePath" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithWrongDomain" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testParseWithPathMismatch" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testParseWithPathMismatch2" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieNameWithBlanks" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.001"/>
+  <testcase name="testCookieNameBlank" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieNameStartingWithDollarSign" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testCookieWithComma" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.003"/>
+  <testcase name="testDateFormats" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0.012"/>
+  <testcase name="testSecondDomainLevelCookie" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testSecondDomainLevelCookieMatch1" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+  <testcase name="testDomainCaseInsensitivity" classname="org.apache.http.impl.cookie.TestBrowserCompatSpec" time="0"/>
+</testsuite>
