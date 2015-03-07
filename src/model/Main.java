@@ -13,6 +13,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 /**
@@ -32,6 +34,8 @@ public class Main {
     private static boolean loggedIn = false;
     private static int coupons = 0;
     private static int j4uDeals = 0;
+    
+    private static final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 
     private static LinkedList<String> itemsAdded = new LinkedList<String>();
 
@@ -47,7 +51,7 @@ public class Main {
                 java.util.logging.Level.OFF);
 
         // note: Chrome fails to access safeway's website
-        final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
+        //webClient = new WebClient(BrowserVersion.FIREFOX_24);
         webClient.getCookieManager().setCookiesEnabled(true);
 
         System.out.println("Going to Safeway Login site..");
@@ -66,7 +70,10 @@ public class Main {
                 webClient.waitForBackgroundJavaScript(10000);
                 if (checkPage(personalizedDealsPage.getTitleText(),
                         "Safeway - Personalized Deals")) {
-                    j4uDeals = addCoupons(personalizedDealsPage);
+                	HtmlSelect itemsPerPage = personalizedDealsPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
+                	itemsPerPage.setSelectedAttribute("-1", true);
+                	webClient.waitForBackgroundJavaScript(10000);
+                    j4uDeals = addAllCouponTypes(personalizedDealsPage);
                 }
 
                 System.out.println("Going to the coupon center page..");
@@ -75,7 +82,10 @@ public class Main {
                 webClient.waitForBackgroundJavaScript(10000);
                 if (checkPage(couponCenterPage.getTitleText(),
                         "Safeway - Coupon Center")) {
-                    coupons = addCoupons(couponCenterPage);
+                	HtmlSelect itemsPerPage = couponCenterPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
+                	itemsPerPage.setSelectedAttribute("-1", true);
+                	webClient.waitForBackgroundJavaScript(10000);
+                    coupons = addAllCouponTypes(couponCenterPage);
                 }
 
                 logout(couponCenterPage);
@@ -138,30 +148,35 @@ public class Main {
         }
     }
 
-    private static int addCoupons(HtmlPage page) throws IOException {
+    private static int addAllCouponTypes(HtmlPage page) throws IOException {
         System.out.println("Adding Coupons..");
         int couponsAdded = 0;
-        String couponXpathDivClass = "//div[@class='lt-offer  lt-border-enabled-offer lt-offer-program-"; // needs
-        couponsAdded += addCoupon(page, couponXpathDivClass + "mf']");
-        couponsAdded += addCoupon(page, couponXpathDivClass + "sc']");
-        couponsAdded += addCoupon(page, couponXpathDivClass + "mf lt-last-column']");
-        couponsAdded += addCoupon(page, couponXpathDivClass + "sc lt-last-column']");
+        String couponXpathDivClass = "//div[@class='lt-offer  lt-border-enabled-offer lt-offer-program-";
+        couponsAdded += addAllCoupons(page, couponXpathDivClass + "mf']");
+        couponsAdded += addAllCoupons(page, couponXpathDivClass + "sc']");
+        couponsAdded += addAllCoupons(page, couponXpathDivClass + "mf lt-last-column']");
+        couponsAdded += addAllCoupons(page, couponXpathDivClass + "sc lt-last-column']");
         return couponsAdded;
     }
 
-    private static int addCoupon(HtmlPage page, String xpath)
+    private static int addAllCoupons(HtmlPage page, String xpath)
             throws IOException {
         int couponAdded = 0;
         DomNode addCouponNode = page.getFirstByXPath(xpath);
-        if (addCouponNode != null) {
-            HtmlAnchor addButton = addCouponNode.getFirstByXPath(xpath
+        while (addCouponNode != null) {
+            HtmlAnchor addAnchor = addCouponNode.getFirstByXPath(xpath
                     + "//a[@class='lt-add-offer-link lt-buttonContainer']");
-            page = addButton.click();
-            String name = addButton.getAttribute("title");
+            HtmlSpan addSpan = addAnchor.getFirstByXPath("./span");
+            page = addSpan.click();
+            webClient.waitForBackgroundJavaScript(10000);
+            //page = addAnchor.click();
+            //webClient.waitForBackgroundJavaScript(10000);
+            String name = addAnchor.getAttribute("title");
             name = name.substring(4); // remove 'add ' from title
             System.out.println("Added: " + name);
             itemsAdded.add(name);
             couponAdded++;
+            addCouponNode = page.getFirstByXPath(xpath);
         }
         return couponAdded;
     }
