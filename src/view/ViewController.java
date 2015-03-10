@@ -51,22 +51,29 @@ public class ViewController extends JFrame {
 //		statusField.setEditable(false);
 //		frame.add(statusField, BorderLayout.PAGE_START);
 //		statusField.setVisible(true);
-		addTextComponent(frame, "Status Field", BorderLayout.PAGE_START);
+		addTextArea(frame, "Status Field", BorderLayout.PAGE_START);
 		
 //		JTextArea couponsAddedField = new JTextArea("Coupons");
 //		couponsAddedField.setEditable(false);
 //		frame.add(couponsAddedField, BorderLayout.WEST);
 //		couponsAddedField.setVisible(true);
-		addTextComponent(frame, "Coupons", BorderLayout.CENTER);
-		addTextComponent(frame, "Username", BorderLayout.EAST);
-		addTextComponent(frame, "Password", BorderLayout.EAST);
+		addTextArea(frame, "Coupons", BorderLayout.CENTER);
+		addTextField(frame, "Username", BorderLayout.EAST);
+		addTextField(frame, "Password", BorderLayout.EAST);
 		
 		frame.setVisible(true);
 	}
 	
-	public void addTextComponent(JFrame frame, String name, String location) {
+	public void addTextArea(JFrame frame, String name, String location) {
 		JTextArea field = new JTextArea(name);
 		field.setEditable(false);
+		frame.add(field, location);
+		field.setVisible(true);
+	}
+	
+	public void addTextField(JFrame frame, String name, String location) {
+		JTextField field = new JTextField(name);
+		field.setEditable(true);
 		frame.add(field, location);
 		field.setVisible(true);
 	}
