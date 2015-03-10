@@ -32,12 +32,21 @@ public class WebCrawler {
     private final String FILENAME = "safeway_coupons_added.txt";
 
     private boolean loggedIn = false;
-    private int coupons = 0;
-    private int j4uDeals = 0;
+    //private int coupons = 0;
+    //private int j4uDeals = 0;
+    private String currentStatus;
     
     public final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 
     private LinkedList<String> itemsAdded = new LinkedList<String>();
+    
+    public WebCrawler() {
+    	java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
+                java.util.logging.Level.OFF);
+        java.util.logging.Logger.getLogger("org.apache").setLevel(
+                java.util.logging.Level.OFF);
+        webClient.getCookieManager().setCookiesEnabled(true);
+    }
 
     /**
      * @param args
@@ -45,16 +54,13 @@ public class WebCrawler {
      * @throws Exception
      *             Web access.
      */
-    public void addAllCoupons() throws Exception {
-        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
-                java.util.logging.Level.OFF);
-        webClient.getCookieManager().setCookiesEnabled(true);
+    public int addAllCoupons() throws Exception {
+    	int couponsAdded = 0;
         final HtmlPage mainPage = webClient.getPage(LOGIN_URL);
         if (mainPage.getTitleText().equals("Safeway - Sign In")) {
             final HtmlPage loggedInPage = login(mainPage);
             if (loggedInPage.getTitleText().equals("Safeway - Official Site")) {
                 loggedIn = true;
-
                 final HtmlPage personalizedDealsPage = webClient
                         .getPage(PERSONALIZED_PAGE);
                 webClient.waitForBackgroundJavaScript(10000);
@@ -62,7 +68,7 @@ public class WebCrawler {
                 	HtmlSelect itemsPerPage = personalizedDealsPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
-                    j4uDeals = addAllCouponTypes(personalizedDealsPage);
+                    couponsAdded = addAllCouponTypes(personalizedDealsPage);
                 }
 
                 final HtmlPage couponCenterPage = webClient
@@ -72,22 +78,21 @@ public class WebCrawler {
                 	HtmlSelect itemsPerPage = couponCenterPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
-                    coupons = addAllCouponTypes(couponCenterPage);
+                    couponsAdded += addAllCouponTypes(couponCenterPage);
                 }
 
                 logout(couponCenterPage);
-                System.out.println("Closing windows..");
+                updateStatus("Closing windows..");
                 webClient.closeAllWindows();
-                System.out.println("Done");
-                System.out.println("Total J4U Deals added: " + j4uDeals);
-                System.out.println("Total regular coupons added: " + coupons);
+                updateStatus("Done");
                 saveItemsAdded();
             } else {
-                System.out.println("Couldn't log in.");
+                updateStatus("Couldn't log in.");
             }
         } else {
-            System.out.println("Couldn't access Safeway's login site.");
+            updateStatus("Couldn't access Safeway's login site.");
         }
+        return couponsAdded;
     }
 
     /**
@@ -198,6 +203,11 @@ public class WebCrawler {
             writer.println(item);
         }
         writer.close();
+    }
+    
+    public void updateStatus(String newStatus) {
+    	System.out.println(newStatus);
+    	currentStatus = newStatus;
     }
 
 }
