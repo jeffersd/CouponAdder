@@ -49,6 +49,9 @@ public class Main {
         // turn off annoying htmlunit warnings
         java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
                 java.util.logging.Level.OFF);
+        // turn off annoying httpclient warnings, specifically about rejected cookies
+        java.util.logging.Logger.getLogger("org.apache").setLevel(
+                java.util.logging.Level.OFF);
 
         // note: Chrome fails to access safeway's website
         //webClient = new WebClient(BrowserVersion.FIREFOX_24);
