@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.apache.http.impl.client.TestFutureRequestExecutionService
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.276 sec - in org.apache.http.impl.client.TestFutureRequestExecutionService
