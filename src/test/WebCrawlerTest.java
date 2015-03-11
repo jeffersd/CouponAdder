@@ -9,6 +9,8 @@ import model.WebCrawler;
 
 import org.junit.Test;
 
+import view.ViewController;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -21,7 +23,7 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void loginTest() {
-		WebCrawler WC = new WebCrawler();
+		WebCrawler WC = new WebCrawler(new ViewController());
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
@@ -48,7 +50,7 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void clickLinkTest() {
-		WebCrawler WC = new WebCrawler();
+		WebCrawler WC = new WebCrawler(new ViewController());
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		try {
 			final HtmlPage page = client.getPage("https://www.safeway.com");

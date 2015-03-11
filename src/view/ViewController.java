@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,7 +22,7 @@ import model.WebCrawler;
  * @author dillon
  *
  */
-public class ViewController extends JFrame {
+public class ViewController extends JFrame implements Observer {
 	/**
 	 * 
 	 */
@@ -30,15 +32,16 @@ public class ViewController extends JFrame {
 	private JPanel mainPanel;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
+	private JTextArea statusArea;
 	
 	private int viewWidth = 300;
-	private int viewHeight = 100;
+	private int viewHeight = 110;
 	private int startLocationX = 150;
 	private int startLocationY = 150;
 	private WebCrawler model;
 
 	public ViewController() {
-		model = new WebCrawler();
+		model = new WebCrawler(this); // send down self as observer
 		
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -49,10 +52,13 @@ public class ViewController extends JFrame {
 		frame.setResizable(false);
 		frame.setTitle("Coupon Adder");
 		
+		statusArea = new JTextArea("Status");
+		frame.add(statusArea, BorderLayout.PAGE_START);
+		
 		startPanel = addPanel(3, 1);
 		mainPanel = addPanel(1, 2);
 		
-		addTextArea(mainPanel, "Status Field");
+		//addTextArea(mainPanel, "Status Field");
 		addTextArea(mainPanel, "Coupons");
 		
 		addLabel(startPanel, "Username: ");
@@ -106,16 +112,11 @@ public class ViewController extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				startPanel.setVisible(false);
-				mainPanel.setVisible(true);
-				int coupons = 0;
 				model.setUsername(usernameField.getText());
 				//char[] passwordAsCharArray = passwordField.getPassword();
 				model.setPassword(passwordField.getText());
-				coupons = model.addAllCoupons();
-				if (coupons == -1) {
-					startPanel.setVisible(true);
-					mainPanel.setVisible(false);
+				if (!model.getRunning()) {
+					(new Thread(model)).start();
 				}
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -123,6 +124,10 @@ public class ViewController extends JFrame {
 		}
 		
 	}
-	
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		statusArea.setText((String) arg1);
+	}
 	
 }
