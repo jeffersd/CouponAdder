@@ -1,6 +1,10 @@
 package model;
 
 import java.io.IOException;
+import java.util.Observable;
+
+import view.ViewController;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -18,19 +22,19 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
  * @author dillon
  * 
  */
-public class WebCrawler {
+public class WebCrawler extends Observable implements Runnable {
     private static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
     private static final String PERSONALIZED_PAGE = "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
     private static final String COUPON_PAGE = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
-
     private String username;
     private String password;
-    private boolean loggedIn = false;
-    private String currentStatus;
+    private boolean loggedIn;
+    private boolean running;
     
     public final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 
-    public WebCrawler() {
+    public WebCrawler(ViewController observer) {
+    	addObserver(observer);
     	java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
                 java.util.logging.Level.OFF);
         java.util.logging.Logger.getLogger("org.apache").setLevel(
@@ -38,6 +42,8 @@ public class WebCrawler {
         webClient.getCookieManager().setCookiesEnabled(true);
         username = "";
         password = "";
+        running = false;
+        loggedIn = false;
     }
 
     /**
@@ -47,6 +53,7 @@ public class WebCrawler {
      *             Web access.
      */
     public int addAllCoupons() {
+    	updateStatus("Adding coupons..");
     	int couponsAdded = 0;
         HtmlPage mainPage;
 		try {
@@ -119,7 +126,7 @@ public class WebCrawler {
 				}
                 updateStatus("Closing windows..");
                 webClient.closeAllWindows();
-                updateStatus("Done");
+                updateStatus("Done, added: " + couponsAdded + " coupons.");
             } else {
                 updateStatus("Couldn't log in with username: " + username + "and password: " + password);
                 couponsAdded = -1;
@@ -187,7 +194,7 @@ public class WebCrawler {
     }
 
     private int addAllCouponTypes(HtmlPage page) throws IOException {
-        System.out.println("Adding Coupons..");
+        updateStatus("Adding Coupons..");
         int couponsAdded = 0;
         String couponXpathDivClass = "//div[@class='lt-offer  lt-border-enabled-offer lt-offer-program-";
         couponsAdded += addAllCoupons(page, couponXpathDivClass + "mf']");
@@ -211,7 +218,7 @@ public class WebCrawler {
             //webClient.waitForBackgroundJavaScript(10000);
             String name = addAnchor.getAttribute("title");
             name = name.substring(4); // remove 'add ' from title
-            System.out.println("Added: " + name);
+            updateStatus("Added: " + name);
             couponAdded++;
             addCouponNode = page.getFirstByXPath(xpath);
         }
@@ -220,20 +227,20 @@ public class WebCrawler {
 
     private void logout(HtmlPage page) throws IOException {
         if (loggedIn) {
-            System.out.println("Logging out..");
+            updateStatus("Logging out..");
             final HtmlPage loggedOffPage = clickLink(page,
                     "//a[@href='javascript:openssoLogoff();']");
             if (loggedOffPage == null) {
-                System.out.println("Didn't find logout button.");
+                updateStatus("Didn't find logout button.");
             } else {
-                System.out.println("At page: " + loggedOffPage.getTitleText());
+                updateStatus("At page: " + loggedOffPage.getTitleText());
             }
         }
     }
     
     public void updateStatus(String newStatus) {
-    	System.out.println(newStatus);
-    	currentStatus = newStatus;
+    	setChanged();
+    	notifyObservers(newStatus);
     }
     
     public void setUsername(String newUsername) {
@@ -243,5 +250,20 @@ public class WebCrawler {
     public void setPassword(String newPassword) {
     	password = newPassword;
     }
+    
+    public void setRunning(boolean newValue) {
+    	running = newValue;
+    }
+    
+    public boolean getRunning() {
+    	return running;
+    }
+
+	@Override
+	public void run() {
+		setRunning(true);
+		addAllCoupons();
+		setRunning(false);
+	}
 
 }
