@@ -52,16 +52,16 @@ public class WebCrawler extends Observable implements Runnable {
      * @throws Exception
      *             Web access.
      */
-    public int addAllCoupons() {
-    	updateStatus("Adding coupons..");
+    public void addAllCoupons() {
+    	updateStatus("Initializing..");
     	int couponsAdded = 0;
         HtmlPage mainPage;
 		try {
 			mainPage = webClient.getPage(LOGIN_URL);
 		} catch (Exception e) {
 			e.printStackTrace();
-			updateStatus("Exception opening login page.");
-			return -1;
+			updateStatus("Error opening login page");
+			return;
 		} 
         if (mainPage.getTitleText().equals("Safeway - Sign In")) {
             HtmlPage loggedInPage;
@@ -69,21 +69,24 @@ public class WebCrawler extends Observable implements Runnable {
 				loggedInPage = login(mainPage);
 			} catch (IOException e2) {
 				e2.printStackTrace();
-				updateStatus("Error logging in.");
-				return -1;
+				updateStatus("Error logging in");
+				return;
 			}
             if (loggedInPage.getTitleText().equals("Safeway - Official Site")) {
                 loggedIn = true;
+                updateStatus("Logged in");
                 HtmlPage personalizedDealsPage;
 				try {
+					updateStatus("Going to personalized page..");
 					personalizedDealsPage = webClient.getPage(PERSONALIZED_PAGE);
 				} catch (Exception e2) {
 					e2.printStackTrace();
-					updateStatus("Error loading Personalized Deals Page.");
-					return -1;
+					updateStatus("Error loading Personalized Deals Page");
+					return;
 				}
                 webClient.waitForBackgroundJavaScript(10000);
                 if (personalizedDealsPage.getTitleText().equals("Safeway - Personalized Deals")) {
+                	updateStatus("At personalized page");
                 	HtmlSelect itemsPerPage = personalizedDealsPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
@@ -91,21 +94,21 @@ public class WebCrawler extends Observable implements Runnable {
 						couponsAdded = addAllCouponTypes(personalizedDealsPage);
 					} catch (IOException e) {
 						e.printStackTrace();
-						updateStatus("Error adding coupons from Personalized Page.");
-						return -1;
+						updateStatus("Error adding coupons from Personalized Page");
 					}
                 }
-
                 HtmlPage couponCenterPage;
 				try {
+					updateStatus("Going to coupon center page..");
 					couponCenterPage = webClient.getPage(COUPON_PAGE);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 					updateStatus("Error loading Coupon Center Page.");
-					return -1;
+					return;
 				}
                 webClient.waitForBackgroundJavaScript(10000);
                 if (couponCenterPage.getTitleText().equals("Safeway - Coupon Center")) {
+                	updateStatus("At coupon center page");
                 	HtmlSelect itemsPerPage = couponCenterPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
@@ -113,29 +116,24 @@ public class WebCrawler extends Observable implements Runnable {
 						couponsAdded += addAllCouponTypes(couponCenterPage);
 					} catch (IOException e) {
 						e.printStackTrace();
-						updateStatus("Error adding coupons from Coupon Center Page.");
-						return -1;
+						updateStatus("Error adding coupons from Coupon Center Page");
 					}
                 }
-
                 try {
 					logout(couponCenterPage);
 				} catch (IOException e) {
 					e.printStackTrace();
-					updateStatus("Error logging out.");
+					updateStatus("Error logging out");
 				}
                 updateStatus("Closing windows..");
                 webClient.closeAllWindows();
                 updateStatus("Done, added: " + couponsAdded + " coupons.");
             } else {
                 updateStatus("Couldn't log in with username: " + username + "and password: " + password);
-                couponsAdded = -1;
             }
         } else {
-            updateStatus("Couldn't access Safeway's login site.");
-            couponsAdded = -1;
+            updateStatus("Couldn't access Safeway's login site");
         }
-        return couponsAdded;
     }
 
     /**
@@ -149,6 +147,7 @@ public class WebCrawler extends Observable implements Runnable {
      *             IOException
      */
     public HtmlPage login(HtmlPage page) throws IOException {
+    	updateStatus("Logging in..");
     	HtmlForm loginForm = page.getFormByName("Login");
     	if (loginForm == null) {
     		return null;
@@ -194,7 +193,7 @@ public class WebCrawler extends Observable implements Runnable {
     }
 
     private int addAllCouponTypes(HtmlPage page) throws IOException {
-        updateStatus("Adding Coupons..");
+        updateStatus("Looking for coupons..");
         int couponsAdded = 0;
         String couponXpathDivClass = "//div[@class='lt-offer  lt-border-enabled-offer lt-offer-program-";
         couponsAdded += addAllCoupons(page, couponXpathDivClass + "mf']");
@@ -204,8 +203,7 @@ public class WebCrawler extends Observable implements Runnable {
         return couponsAdded;
     }
 
-    private int addAllCoupons(HtmlPage page, String xpath)
-            throws IOException {
+    private int addAllCoupons(HtmlPage page, String xpath) throws IOException {
         int couponAdded = 0;
         DomNode addCouponNode = page.getFirstByXPath(xpath);
         while (addCouponNode != null) {
@@ -214,8 +212,6 @@ public class WebCrawler extends Observable implements Runnable {
             HtmlSpan addSpan = addAnchor.getFirstByXPath("./span");
             page = addSpan.click();
             webClient.waitForBackgroundJavaScript(10000);
-            //page = addAnchor.click();
-            //webClient.waitForBackgroundJavaScript(10000);
             String name = addAnchor.getAttribute("title");
             name = name.substring(4); // remove 'add ' from title
             updateStatus("Added: " + name);
