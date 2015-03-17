@@ -23,6 +23,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
  * @author dillon
  * 
  */
+@Deprecated
 public class Main {
     private static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
     private static final String USER_NAME = "***REMOVED***";
