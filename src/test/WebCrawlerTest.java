@@ -67,22 +67,18 @@ public class WebCrawlerTest {
 	
 	/**
 	 * Tests the clicking of a link.
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws FailingHttpStatusCodeException 
 	 */
 	@Test
-	public void clickLinkTest() {
+	public void clickLinkTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		WebCrawler WC = new WebCrawler(new ViewController());
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
-		try {
-			final HtmlPage page = client.getPage("https://www.safeway.com");
-			final HtmlPage newPage = WC.clickLink(page, "//a");
-			
-			assertNotNull(newPage);
-			assertNotEquals(page, newPage);
-		} catch (Exception e) {
-			e.printStackTrace();
-			assertTrue(false);
-		}
-		
+		final HtmlPage page = client.getPage("https://www.safeway.com");
+		final HtmlPage newPage = WC.clickLink(page, "//a");
+		assertNotNull(newPage);
+		assertNotEquals(page, newPage);
 	}
 	
 	/**
@@ -119,6 +115,16 @@ public class WebCrawlerTest {
 		assertTrue("password".equals(WC.getPassword()));
 		WC.setPassword("another");
 		assertFalse("password".equals(WC.getPassword()));
+	}
+	
+	/**
+	 * Tests adding all coupons from a single page
+	 */
+	@Test
+	public void addAllCouponsFromPageTest() {
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
+		
 	}
 	
 	
