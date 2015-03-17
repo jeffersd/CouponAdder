@@ -49,7 +49,7 @@ public class ViewController extends JFrame implements Observer {
 		frame.pack();
 		frame.setLocation(startLocationX, startLocationY);
 		frame.setLayout(new BorderLayout());
-		frame.setResizable(false);
+		//frame.setResizable(false);
 		frame.setTitle("Coupon Adder");
 		
 		statusArea = new JTextArea("Status");

@@ -35,11 +35,7 @@ public class WebCrawlerTest {
 			
 			assertTrue(oldPageTitle.equals("Safeway - Sign In"));
 			assertTrue(newPageTitle.equals("Safeway - Official Site"));
-		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		assertFalse(oldPageTitle.equals(newPageTitle));
@@ -57,6 +53,7 @@ public class WebCrawlerTest {
 			final HtmlPage newPage = WC.clickLink(page, "//a");
 			
 			assertNotNull(newPage);
+			assertNotEquals(page, newPage);
 		} catch (FailingHttpStatusCodeException e) {
 			e.printStackTrace();
 			assertTrue(false);
@@ -69,5 +66,44 @@ public class WebCrawlerTest {
 		}
 		
 	}
+	
+	/**
+	 * Tests the 'running' attribute mutators
+	 */
+	@Test
+	public void runningTest() {
+		WebCrawler WC = new WebCrawler(new ViewController());
+		WC.setRunning(false);
+		assertFalse(WC.getRunning());
+		WC.setRunning(true);
+		assertTrue(WC.getRunning());
+	}
+	
+	/**
+	 * Tests the username attribute mutators
+	 */
+	@Test
+	public void usernameTest() {
+		WebCrawler WC = new WebCrawler(new ViewController());
+		WC.setUsername("username");
+		assertTrue("username".equals(WC.getUsername()));
+		WC.setUsername("another");
+		assertFalse("username".equals(WC.getUsername()));
+	}
+	
+	/**
+	 * Tests the password attribute mutators
+	 */
+	@Test
+	public void passwordTest() {
+		WebCrawler WC = new WebCrawler(new ViewController());
+		WC.setPassword("password");
+		assertTrue("password".equals(WC.getPassword()));
+		WC.setPassword("another");
+		assertFalse("password".equals(WC.getPassword()));
+	}
+	
+	
+	
 
 }
