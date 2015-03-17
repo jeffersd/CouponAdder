@@ -75,6 +75,8 @@ public class WebCrawler extends Observable implements Runnable {
             if (loggedInPage.getTitleText().equals("Safeway - Official Site")) {
                 loggedIn = true;
                 updateStatus("Logged in");
+                
+                /*
                 HtmlPage personalizedDealsPage;
 				try {
 					updateStatus("Going to personalized page..");
@@ -96,8 +98,12 @@ public class WebCrawler extends Observable implements Runnable {
 						e.printStackTrace();
 						updateStatus("Error adding coupons from Personalized Page");
 					}
-                }
-                HtmlPage couponCenterPage;
+                }*/
+                
+                addCouponsFromPage("personalized page", PERSONALIZED_PAGE, "Safeway - Personalized Deals", "//select[@id='j4u-items-per-page']");
+                addCouponsFromPage("coupon center", COUPON_PAGE, "Safeway - Coupon Center", "//select[@id='j4u-items-per-page']");
+                //HtmlPage couponCenterPage;
+                /*
 				try {
 					updateStatus("Going to coupon center page..");
 					couponCenterPage = webClient.getPage(COUPON_PAGE);
@@ -118,13 +124,15 @@ public class WebCrawler extends Observable implements Runnable {
 						e.printStackTrace();
 						updateStatus("Error adding coupons from Coupon Center Page");
 					}
-                }
+                }*/
+                /*
                 try {
 					logout(couponCenterPage);
 				} catch (IOException e) {
 					e.printStackTrace();
 					updateStatus("Error logging out");
-				}
+				}*/
+                
                 updateStatus("Closing windows..");
                 webClient.closeAllWindows();
                 updateStatus("Done, added: " + couponsAdded + " coupons.");
@@ -134,6 +142,39 @@ public class WebCrawler extends Observable implements Runnable {
         } else {
             updateStatus("Couldn't access Safeway's login site");
         }
+    }
+    
+    public int addCouponsFromPage(String pageName, String url, String title, String xpath) {
+    	HtmlPage page;
+    	int couponsAdded = 0;
+		try {
+			updateStatus("Going to " + pageName + " page..");
+			page = webClient.getPage(url);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			updateStatus("Error loading " + pageName + " Page.");
+			return 0;
+		}
+        webClient.waitForBackgroundJavaScript(10000);
+        if (page.getTitleText().equals(title)) {
+        	updateStatus("At " + pageName + " page");
+        	HtmlSelect itemsPerPage = page.getFirstByXPath(xpath);
+        	itemsPerPage.setSelectedAttribute("-1", true);
+        	webClient.waitForBackgroundJavaScript(10000);
+            try {
+				couponsAdded = addAllCouponTypes(page);
+			} catch (IOException e) {
+				e.printStackTrace();
+				updateStatus("Error adding coupons from " + pageName + " page");
+			}
+        }
+        try {
+			logout(page);
+		} catch (IOException e) {
+			e.printStackTrace();
+			updateStatus("Error logging out");
+		}
+        return couponsAdded;
     }
 
     /**
@@ -226,10 +267,8 @@ public class WebCrawler extends Observable implements Runnable {
             updateStatus("Logging out..");
             final HtmlPage loggedOffPage = clickLink(page,
                     "//a[@href='javascript:openssoLogoff();']");
-            if (loggedOffPage == null) {
-                updateStatus("Didn't find logout button.");
-            } else {
-                updateStatus("At page: " + loggedOffPage.getTitleText());
+            if (loggedOffPage != null) {
+            	updateStatus("At page: " + loggedOffPage.getTitleText());
             }
         }
         
@@ -244,8 +283,16 @@ public class WebCrawler extends Observable implements Runnable {
     	username = newUsername;
     }
     
+    public String getUsername() {
+    	return username;
+    }
+    
     public void setPassword(String newPassword) {
     	password = newPassword;
+    }
+    
+    public String getPassword() {
+    	return password;
     }
     
     public void setRunning(boolean newValue) {
