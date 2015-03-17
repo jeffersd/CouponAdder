@@ -1,10 +1,9 @@
 package model;
 
-import java.util.LinkedList;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.util.Observable;
+
+import view.ViewController;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,21 +22,29 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
  * @author dillon
  * 
  */
-public class WebCrawler {
-    private final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
-    private final String USER_NAME = "***REMOVED***";
-    private final String PASSWORD = "***REMOVED***";
-    private final String PERSONALIZED_PAGE = "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
-    private final String COUPON_PAGE = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
-    private final String FILENAME = "safeway_coupons_added.txt";
-
-    private boolean loggedIn = false;
-    private int coupons = 0;
-    private int j4uDeals = 0;
+public class WebCrawler extends Observable implements Runnable {
+    private static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
+    private static final String PERSONALIZED_PAGE = "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
+    private static final String COUPON_PAGE = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
+    private String username;
+    private String password;
+    private boolean loggedIn;
+    private boolean running;
     
     public final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 
-    private LinkedList<String> itemsAdded = new LinkedList<String>();
+    public WebCrawler(ViewController observer) {
+    	addObserver(observer);
+    	java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
+                java.util.logging.Level.OFF);
+        java.util.logging.Logger.getLogger("org.apache").setLevel(
+                java.util.logging.Level.OFF);
+        webClient.getCookieManager().setCookiesEnabled(true);
+        username = "";
+        password = "";
+        running = false;
+        loggedIn = false;
+    }
 
     /**
      * @param args
@@ -45,48 +52,87 @@ public class WebCrawler {
      * @throws Exception
      *             Web access.
      */
-    public void addAllCoupons() throws Exception {
-        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
-                java.util.logging.Level.OFF);
-        webClient.getCookieManager().setCookiesEnabled(true);
-        final HtmlPage mainPage = webClient.getPage(LOGIN_URL);
+    public void addAllCoupons() {
+    	updateStatus("Initializing..");
+    	int couponsAdded = 0;
+        HtmlPage mainPage;
+		try {
+			mainPage = webClient.getPage(LOGIN_URL);
+		} catch (Exception e) {
+			e.printStackTrace();
+			updateStatus("Error opening login page");
+			return;
+		} 
         if (mainPage.getTitleText().equals("Safeway - Sign In")) {
-            final HtmlPage loggedInPage = login(mainPage);
+            HtmlPage loggedInPage;
+			try {
+				loggedInPage = login(mainPage);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+				updateStatus("Error logging in");
+				return;
+			}
             if (loggedInPage.getTitleText().equals("Safeway - Official Site")) {
                 loggedIn = true;
-
-                final HtmlPage personalizedDealsPage = webClient
-                        .getPage(PERSONALIZED_PAGE);
+                updateStatus("Logged in");
+                HtmlPage personalizedDealsPage;
+				try {
+					updateStatus("Going to personalized page..");
+					personalizedDealsPage = webClient.getPage(PERSONALIZED_PAGE);
+				} catch (Exception e2) {
+					e2.printStackTrace();
+					updateStatus("Error loading Personalized Deals Page");
+					return;
+				}
                 webClient.waitForBackgroundJavaScript(10000);
                 if (personalizedDealsPage.getTitleText().equals("Safeway - Personalized Deals")) {
+                	updateStatus("At personalized page");
                 	HtmlSelect itemsPerPage = personalizedDealsPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
-                    j4uDeals = addAllCouponTypes(personalizedDealsPage);
+                    try {
+						couponsAdded = addAllCouponTypes(personalizedDealsPage);
+					} catch (IOException e) {
+						e.printStackTrace();
+						updateStatus("Error adding coupons from Personalized Page");
+					}
                 }
-
-                final HtmlPage couponCenterPage = webClient
-                        .getPage(COUPON_PAGE);
+                HtmlPage couponCenterPage;
+				try {
+					updateStatus("Going to coupon center page..");
+					couponCenterPage = webClient.getPage(COUPON_PAGE);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					updateStatus("Error loading Coupon Center Page.");
+					return;
+				}
                 webClient.waitForBackgroundJavaScript(10000);
                 if (couponCenterPage.getTitleText().equals("Safeway - Coupon Center")) {
+                	updateStatus("At coupon center page");
                 	HtmlSelect itemsPerPage = couponCenterPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
                 	itemsPerPage.setSelectedAttribute("-1", true);
                 	webClient.waitForBackgroundJavaScript(10000);
-                    coupons = addAllCouponTypes(couponCenterPage);
+                    try {
+						couponsAdded += addAllCouponTypes(couponCenterPage);
+					} catch (IOException e) {
+						e.printStackTrace();
+						updateStatus("Error adding coupons from Coupon Center Page");
+					}
                 }
-
-                logout(couponCenterPage);
-                System.out.println("Closing windows..");
+                try {
+					logout(couponCenterPage);
+				} catch (IOException e) {
+					e.printStackTrace();
+					updateStatus("Error logging out");
+				}
+                updateStatus("Closing windows..");
                 webClient.closeAllWindows();
-                System.out.println("Done");
-                System.out.println("Total J4U Deals added: " + j4uDeals);
-                System.out.println("Total regular coupons added: " + coupons);
-                saveItemsAdded();
+                updateStatus("Done, added: " + couponsAdded + " coupons.");
             } else {
-                System.out.println("Couldn't log in.");
+                updateStatus("Couldn't log in with username: " + username + "and password: " + password);
             }
         } else {
-            System.out.println("Couldn't access Safeway's login site.");
+            updateStatus("Couldn't access Safeway's login site");
         }
     }
 
@@ -101,6 +147,7 @@ public class WebCrawler {
      *             IOException
      */
     public HtmlPage login(HtmlPage page) throws IOException {
+    	updateStatus("Logging in..");
     	HtmlForm loginForm = page.getFormByName("Login");
     	if (loginForm == null) {
     		return null;
@@ -110,8 +157,8 @@ public class WebCrawler {
         if (userIdField == null || passwordField == null) {
         	return null;
         }
-        userIdField.type(USER_NAME);
-        passwordField.type(PASSWORD);
+        userIdField.type(username);
+        passwordField.type(password);
         HtmlAnchor signInButton = (HtmlAnchor) loginForm
                 .getFirstByXPath("//a[@id='SignInBtn']");
         if (signInButton == null) {
@@ -146,7 +193,7 @@ public class WebCrawler {
     }
 
     private int addAllCouponTypes(HtmlPage page) throws IOException {
-        System.out.println("Adding Coupons..");
+        updateStatus("Looking for coupons..");
         int couponsAdded = 0;
         String couponXpathDivClass = "//div[@class='lt-offer  lt-border-enabled-offer lt-offer-program-";
         couponsAdded += addAllCoupons(page, couponXpathDivClass + "mf']");
@@ -156,8 +203,7 @@ public class WebCrawler {
         return couponsAdded;
     }
 
-    private int addAllCoupons(HtmlPage page, String xpath)
-            throws IOException {
+    private int addAllCoupons(HtmlPage page, String xpath) throws IOException {
         int couponAdded = 0;
         DomNode addCouponNode = page.getFirstByXPath(xpath);
         while (addCouponNode != null) {
@@ -166,12 +212,9 @@ public class WebCrawler {
             HtmlSpan addSpan = addAnchor.getFirstByXPath("./span");
             page = addSpan.click();
             webClient.waitForBackgroundJavaScript(10000);
-            //page = addAnchor.click();
-            //webClient.waitForBackgroundJavaScript(10000);
             String name = addAnchor.getAttribute("title");
             name = name.substring(4); // remove 'add ' from title
-            System.out.println("Added: " + name);
-            itemsAdded.add(name);
+            updateStatus("Added: " + name);
             couponAdded++;
             addCouponNode = page.getFirstByXPath(xpath);
         }
@@ -180,25 +223,44 @@ public class WebCrawler {
 
     private void logout(HtmlPage page) throws IOException {
         if (loggedIn) {
-            System.out.println("Logging out..");
+            updateStatus("Logging out..");
             final HtmlPage loggedOffPage = clickLink(page,
                     "//a[@href='javascript:openssoLogoff();']");
             if (loggedOffPage == null) {
-                System.out.println("Didn't find logout button.");
+                updateStatus("Didn't find logout button.");
             } else {
-                System.out.println("At page: " + loggedOffPage.getTitleText());
+                updateStatus("At page: " + loggedOffPage.getTitleText());
             }
         }
         
     }
-
-    private void saveItemsAdded() throws FileNotFoundException,
-            UnsupportedEncodingException {
-        PrintWriter writer = new PrintWriter(FILENAME, "UTF-8");
-        for (String item : itemsAdded) {
-            writer.println(item);
-        }
-        writer.close();
+    
+    public void updateStatus(String newStatus) {
+    	setChanged();
+    	notifyObservers(newStatus);
     }
+    
+    public void setUsername(String newUsername) {
+    	username = newUsername;
+    }
+    
+    public void setPassword(String newPassword) {
+    	password = newPassword;
+    }
+    
+    public void setRunning(boolean newValue) {
+    	running = newValue;
+    }
+    
+    public boolean getRunning() {
+    	return running;
+    }
+
+	@Override
+	public void run() {
+		setRunning(true);
+		addAllCoupons();
+		setRunning(false);
+	}
 
 }

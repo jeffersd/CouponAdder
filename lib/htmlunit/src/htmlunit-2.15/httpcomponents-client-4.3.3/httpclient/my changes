@@ -1,2 +1,0 @@
--changed cookie acceptance to accept any cookie
--changed the corresponding test to assert that the cookie log is not empty
