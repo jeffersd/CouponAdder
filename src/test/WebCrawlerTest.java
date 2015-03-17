@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 
 import model.WebCrawler;
 
-import org.junit.After;
 import org.junit.Test;
 
 import view.ViewController;
@@ -55,16 +54,13 @@ public class WebCrawlerTest {
 		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
 		oldPageTitle = page.getTitleText();
 		page = WC.login(page, "dillon.jeffers@gmail.com", "Curtis.120391");
+		newPageTitle = page.getTitleText();
 		assertTrue(oldPageTitle.equals("Safeway - Sign In"));
 		assertTrue(newPageTitle.equals("Safeway - Official Site"));
-		assertFalse(oldPageTitle.equals(newPageTitle));
 		// logged in
 		oldPageTitle = page.getTitleText();
 		page = WC.logout(page);
-		newPageTitle =  page.getTitleText();
-		assertFalse(oldPageTitle.equals(newPageTitle));
-		assertTrue(oldPageTitle.equals("Safeway - Official Site"));
-		assertTrue(newPageTitle.equals("Safeway - Sign In"));
+		assertNotNull(page.getAnchorByText("Sign In"));
 	}
 	
 	/**
