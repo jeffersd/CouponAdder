@@ -66,7 +66,7 @@ public class WebCrawler extends Observable implements Runnable {
         if (mainPage.getTitleText().equals("Safeway - Sign In")) {
             HtmlPage loggedInPage;
 			try {
-				loggedInPage = login(mainPage);
+				loggedInPage = login(mainPage, username, password);
 			} catch (IOException e2) {
 				e2.printStackTrace();
 				updateStatus("Error logging in");
@@ -187,7 +187,7 @@ public class WebCrawler extends Observable implements Runnable {
      * @throws IOException
      *             IOException
      */
-    public HtmlPage login(HtmlPage page) throws IOException {
+    public HtmlPage login(HtmlPage page, String username, String password) throws IOException {
     	updateStatus("Logging in..");
     	HtmlForm loginForm = page.getFormByName("Login");
     	if (loginForm == null) {
@@ -262,7 +262,7 @@ public class WebCrawler extends Observable implements Runnable {
         return couponAdded;
     }
 
-    private void logout(HtmlPage page) throws IOException {
+    public HtmlPage logout(HtmlPage page) throws IOException {
         if (loggedIn) {
             updateStatus("Logging out..");
             final HtmlPage loggedOffPage = clickLink(page,
@@ -270,8 +270,9 @@ public class WebCrawler extends Observable implements Runnable {
             if (loggedOffPage != null) {
             	updateStatus("At page: " + loggedOffPage.getTitleText());
             }
+            return loggedOffPage;
         }
-        
+        return null;
     }
     
     public void updateStatus(String newStatus) {
