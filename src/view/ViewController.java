@@ -38,7 +38,7 @@ public class ViewController extends JFrame implements Observer {
 	private int viewHeight = 110;
 	private int startLocationX = 150;
 	private int startLocationY = 150;
-	private WebCrawler model;
+	public WebCrawler model;
 
 	public ViewController() {
 		model = new WebCrawler(this); // send down self as observer
