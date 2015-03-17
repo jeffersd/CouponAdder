@@ -189,6 +189,7 @@ public class WebCrawler {
                 System.out.println("At page: " + loggedOffPage.getTitleText());
             }
         }
+        
     }
 
     private void saveItemsAdded() throws FileNotFoundException,
