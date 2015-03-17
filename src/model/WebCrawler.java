@@ -205,6 +205,7 @@ public class WebCrawler extends Observable implements Runnable {
         if (signInButton == null) {
             return null;
         } else {
+        	loggedIn = true; // wrong?
         	return signInButton.click();
         }
     }
@@ -265,8 +266,9 @@ public class WebCrawler extends Observable implements Runnable {
     public HtmlPage logout(HtmlPage page) throws IOException {
         if (loggedIn) {
             updateStatus("Logging out..");
-            final HtmlPage loggedOffPage = clickLink(page,
-                    "//a[@href='javascript:openssoLogoff();']");
+            //final HtmlPage loggedOffPage = clickLink(page,"//a[@href='javascript:openssoLogoff();']");
+            final HtmlAnchor signOutLink = page.getAnchorByText("Sign Out");
+            final HtmlPage loggedOffPage = signOutLink.click();
             if (loggedOffPage != null) {
             	updateStatus("At page: " + loggedOffPage.getTitleText());
             }
