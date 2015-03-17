@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 
 import model.WebCrawler;
 
+import org.junit.After;
 import org.junit.Test;
 
 import view.ViewController;
@@ -20,25 +21,50 @@ public class WebCrawlerTest {
 
 	/**
 	 * Tests logging into a page.
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws FailingHttpStatusCodeException 
 	 */
 	@Test
-	public void loginTest() {
+	public void loginTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		WebCrawler WC = new WebCrawler(new ViewController());
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
-		try {
-			HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
-			oldPageTitle = page.getTitleText();
-			page = WC.login(page);
-			newPageTitle = page.getTitleText();
-			
-			assertTrue(oldPageTitle.equals("Safeway - Sign In"));
-			assertTrue(newPageTitle.equals("Safeway - Official Site"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		oldPageTitle = page.getTitleText();
+		page = WC.login(page, "***REMOVED***", "***REMOVED***");
+		newPageTitle = page.getTitleText();
+		assertTrue(oldPageTitle.equals("Safeway - Sign In"));
+		assertTrue(newPageTitle.equals("Safeway - Official Site"));
 		assertFalse(oldPageTitle.equals(newPageTitle));
+	}
+	
+	/**
+	 * Tests the logout action
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws FailingHttpStatusCodeException 
+	 */
+	@Test
+	public void logout() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+		WebCrawler WC = new WebCrawler(new ViewController());
+		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
+		String oldPageTitle = "title";
+		String newPageTitle = "title";
+		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		oldPageTitle = page.getTitleText();
+		page = WC.login(page, "***REMOVED***", "***REMOVED***");
+		assertTrue(oldPageTitle.equals("Safeway - Sign In"));
+		assertTrue(newPageTitle.equals("Safeway - Official Site"));
+		assertFalse(oldPageTitle.equals(newPageTitle));
+		// logged in
+		oldPageTitle = page.getTitleText();
+		page = WC.logout(page);
+		newPageTitle =  page.getTitleText();
+		assertFalse(oldPageTitle.equals(newPageTitle));
+		assertTrue(oldPageTitle.equals("Safeway - Official Site"));
+		assertTrue(newPageTitle.equals("Safeway - Sign In"));
 	}
 	
 	/**
@@ -54,13 +80,7 @@ public class WebCrawlerTest {
 			
 			assertNotNull(newPage);
 			assertNotEquals(page, newPage);
-		} catch (FailingHttpStatusCodeException e) {
-			e.printStackTrace();
-			assertTrue(false);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			assertTrue(false);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			assertTrue(false);
 		}
