@@ -46,12 +46,14 @@ public class WebCrawlerTest {
 	 * @throws FailingHttpStatusCodeException 
 	 */
 	@Test
-	public void logout() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+	public void logoutTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		WebCrawler WC = new WebCrawler(new ViewController());
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
 		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		HtmlPage failedLogout = WC.logout(page);
+		assertNull(failedLogout);
 		oldPageTitle = page.getTitleText();
 		page = WC.login(page, "***REMOVED***", "***REMOVED***");
 		newPageTitle = page.getTitleText();
