@@ -227,10 +227,9 @@ public class WebCrawler extends Observable implements Runnable {
         	try {
 				return anchor.click();
 			} catch (IOException e) {
-				//e.printStackTrace();
+				return null;
 			}
         }
-        
         return null;
     }
 
