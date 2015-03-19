@@ -113,8 +113,7 @@ public class ViewController extends JFrame implements Observer {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				model.setUsername(usernameField.getText());
-				//char[] passwordAsCharArray = passwordField.getPassword();
-				model.setPassword(passwordField.getText());
+				model.setPassword(charArrayToString(passwordField.getPassword()));
 				if (!model.getRunning()) {
 					(new Thread(model)).start();
 				}
@@ -123,6 +122,14 @@ public class ViewController extends JFrame implements Observer {
 			}
 		}
 		
+	}
+	
+	public String charArrayToString(char[] passwordAsCharArray) {
+		String password = "";
+		for (char c : passwordAsCharArray) {
+			password += Character.toString(c);
+		}
+		return password;
 	}
 
 	@Override
