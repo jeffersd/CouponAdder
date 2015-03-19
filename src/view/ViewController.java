@@ -30,15 +30,15 @@ public class ViewController extends JFrame implements Observer {
 	
 	private JPanel startPanel;
 	private JPanel mainPanel;
-	private JTextField usernameField;
-	private JPasswordField passwordField;
+	public JTextField usernameField;
+	public JPasswordField passwordField;
 	private JTextArea statusArea;
 	
 	private int viewWidth = 300;
 	private int viewHeight = 110;
 	private int startLocationX = 150;
 	private int startLocationY = 150;
-	private WebCrawler model;
+	public WebCrawler model;
 
 	public ViewController() {
 		model = new WebCrawler(this); // send down self as observer
@@ -107,13 +107,16 @@ public class ViewController extends JFrame implements Observer {
 		panel.add(label);
 	}
 	
-	private class AddCouponsButtonActionListener implements ActionListener {
+	public class AddCouponsButtonActionListener implements ActionListener {
 
+		/**
+		 * The method that runs after the user presses 'add all coupons'.
+		 * If one is not running, it starts running the model as a new thread.
+		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				model.setUsername(usernameField.getText());
-				model.setPassword(charArrayToString(passwordField.getPassword()));
+				giveModelUsernameAndPassword();
 				if (!model.getRunning()) {
 					(new Thread(model)).start();
 				}
@@ -122,6 +125,11 @@ public class ViewController extends JFrame implements Observer {
 			}
 		}
 		
+	}
+	
+	public void giveModelUsernameAndPassword() {
+		model.setUsername(usernameField.getText());
+		model.setPassword(charArrayToString(passwordField.getPassword()));
 	}
 	
 	public String charArrayToString(char[] passwordAsCharArray) {
