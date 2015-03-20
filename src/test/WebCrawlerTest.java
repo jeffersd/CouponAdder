@@ -26,7 +26,8 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void loginTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-		WebCrawler WC = new WebCrawler(new ViewController());
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
@@ -47,11 +48,11 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void logoutTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-		WebCrawler WC = new WebCrawler(new ViewController());
-		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
-		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		HtmlPage page = WC.webClient.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
 		HtmlPage failedLogout = WC.logout(page);
 		assertNull(failedLogout);
 		oldPageTitle = page.getTitleText();
@@ -73,9 +74,9 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void clickLinkTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
-		WebCrawler WC = new WebCrawler(new ViewController());
-		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
-		final HtmlPage page = client.getPage("https://www.safeway.com");
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
+		final HtmlPage page = WC.webClient.getPage("https://www.safeway.com");
 		final HtmlPage newPage = WC.clickLink(page, "//a");
 		assertNotNull(newPage);
 		assertNotEquals(page, newPage);
@@ -86,7 +87,8 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void runningTest() {
-		WebCrawler WC = new WebCrawler(new ViewController());
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
 		WC.setRunning(false);
 		assertFalse(WC.getRunning());
 		WC.setRunning(true);
@@ -98,7 +100,8 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void usernameTest() {
-		WebCrawler WC = new WebCrawler(new ViewController());
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
 		WC.setUsername("username");
 		assertTrue("username".equals(WC.getUsername()));
 		WC.setUsername("another");
@@ -110,7 +113,8 @@ public class WebCrawlerTest {
 	 */
 	@Test
 	public void passwordTest() {
-		WebCrawler WC = new WebCrawler(new ViewController());
+		ViewController view = new ViewController();
+		WebCrawler WC = view.model;
 		WC.setPassword("password");
 		assertTrue("password".equals(WC.getPassword()));
 		WC.setPassword("another");
@@ -119,12 +123,21 @@ public class WebCrawlerTest {
 	
 	/**
 	 * Tests adding all coupons from a single page
+	 * @throws IOException 
 	 */
 	@Test
-	public void addAllCouponsFromPageTest() {
+	public void addAllCouponsFromPageTest() throws IOException {
 		ViewController view = new ViewController();
 		WebCrawler WC = view.model;
-		
+		final HtmlPage loginPage = WC.webClient.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		final HtmlPage page = WC.login(loginPage, "***REMOVED***", "***REMOVED***");
+		assertNotNull(page);
+		WC.addCouponsFromPage(WebCrawler.PERSONALIZED_PAGE, WebCrawler.PERSONALIZED_PAGE_TITLE);
+		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.PERSONALIZED_PAGE, WebCrawler.PERSONALIZED_PAGE_TITLE);
+		assertEquals(0, shouldBeZero);
+		WC.addCouponsFromPage(WebCrawler.COUPON_PAGE, WebCrawler.COUPON_PAGE_TITLE);
+		shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_PAGE, WebCrawler.COUPON_PAGE_TITLE);
+		assertEquals(0, shouldBeZero);
 	}
 	
 	
