@@ -30,8 +30,8 @@ public class ViewController extends JFrame implements Observer {
 	
 	private JPanel startPanel;
 	private JPanel mainPanel;
-	public JTextField usernameField;
-	public JPasswordField passwordField;
+	private JTextField usernameField;
+	private JPasswordField passwordField;
 	private JTextArea statusArea;
 	
 	private int viewWidth = 300;
@@ -107,8 +107,69 @@ public class ViewController extends JFrame implements Observer {
 		panel.add(label);
 	}
 	
+	/**
+	 * Transforms a character array to a string
+	 * @param charArray the character array
+	 * @return a string
+	 */
+	public String charArrayToString(char[] charArray) {
+		String newString = "";
+		for (char c : charArray) {
+			newString += Character.toString(c);
+		}
+		return newString;
+	}
+	
+	/**
+	 * Sends the model the username and password from the gui fields.
+	 */
+	public void giveModelUsernameAndPassword() {
+		model.setUsername(getUsernameField());
+		model.setPassword(getPasswordField());
+	}
+	
+	/**
+	 * Sets the value of the username field.
+	 * Used for testing to keep the fields private.
+	 * @param newUsername The new username for the field.
+	 */
+	public void setUsernameField(String newUsername) {
+		usernameField.setText(newUsername);
+	}
+	
+	/**
+	 * Used for testing to keep the field private.
+	 * @return The text value of the field.
+	 */
+	public String getUsernameField() {
+		return usernameField.getText();
+	}
+	
+	/**
+	 * Used for testing to keep the field private.
+	 * @return The text value of the field.
+	 */
+	public String getPasswordField() {
+		char[] charArray = passwordField.getPassword();
+		return charArrayToString(charArray);
+	}
+	
+	/**
+	 * Sets the value of the password field. 
+	 * Used for testing to keep the fields private.
+	 * @param newPassword
+	 */
+	public void setPasswordField(String newPassword) {
+		passwordField.setText(newPassword);
+	}
+	
+	/**
+	 * Listener for the add all coupons button.
+	 * @author dillon
+	 *
+	 */
 	public class AddCouponsButtonActionListener implements ActionListener {
-
+		
 		/**
 		 * The method that runs after the user presses 'add all coupons'.
 		 * If one is not running, it starts running the model as a new thread.
@@ -127,19 +188,6 @@ public class ViewController extends JFrame implements Observer {
 		
 	}
 	
-	public void giveModelUsernameAndPassword() {
-		model.setUsername(usernameField.getText());
-		model.setPassword(charArrayToString(passwordField.getPassword()));
-	}
-	
-	public String charArrayToString(char[] passwordAsCharArray) {
-		String password = "";
-		for (char c : passwordAsCharArray) {
-			password += Character.toString(c);
-		}
-		return password;
-	}
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		statusArea.setText((String) arg1);
