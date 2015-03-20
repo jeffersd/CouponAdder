@@ -105,8 +105,6 @@ public class WebCrawler extends Observable implements Runnable {
 			return -1;
 		}
         webClient.waitForBackgroundJavaScript(10000);
-        System.out.println(title);
-        System.out.println(page.getTitleText());
         if (page.getTitleText().equals(title)) {
         	//updateStatus("At " + pageName + " page");
         	HtmlSelect itemsPerPage = page.getFirstByXPath(COUPONS_PER_PAGE_XPATH);
