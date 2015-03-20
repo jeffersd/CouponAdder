@@ -75,64 +75,8 @@ public class WebCrawler extends Observable implements Runnable {
             if (loggedInPage.getTitleText().equals("Safeway - Official Site")) {
                 loggedIn = true;
                 updateStatus("Logged in");
-                
-                /*
-                HtmlPage personalizedDealsPage;
-				try {
-					updateStatus("Going to personalized page..");
-					personalizedDealsPage = webClient.getPage(PERSONALIZED_PAGE);
-				} catch (Exception e2) {
-					e2.printStackTrace();
-					updateStatus("Error loading Personalized Deals Page");
-					return;
-				}
-                webClient.waitForBackgroundJavaScript(10000);
-                if (personalizedDealsPage.getTitleText().equals("Safeway - Personalized Deals")) {
-                	updateStatus("At personalized page");
-                	HtmlSelect itemsPerPage = personalizedDealsPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
-                	itemsPerPage.setSelectedAttribute("-1", true);
-                	webClient.waitForBackgroundJavaScript(10000);
-                    try {
-						couponsAdded = addAllCouponTypes(personalizedDealsPage);
-					} catch (IOException e) {
-						e.printStackTrace();
-						updateStatus("Error adding coupons from Personalized Page");
-					}
-                }*/
-                
                 addCouponsFromPage("personalized page", PERSONALIZED_PAGE, "Safeway - Personalized Deals", "//select[@id='j4u-items-per-page']");
                 addCouponsFromPage("coupon center", COUPON_PAGE, "Safeway - Coupon Center", "//select[@id='j4u-items-per-page']");
-                //HtmlPage couponCenterPage;
-                /*
-				try {
-					updateStatus("Going to coupon center page..");
-					couponCenterPage = webClient.getPage(COUPON_PAGE);
-				} catch (Exception e1) {
-					e1.printStackTrace();
-					updateStatus("Error loading Coupon Center Page.");
-					return;
-				}
-                webClient.waitForBackgroundJavaScript(10000);
-                if (couponCenterPage.getTitleText().equals("Safeway - Coupon Center")) {
-                	updateStatus("At coupon center page");
-                	HtmlSelect itemsPerPage = couponCenterPage.getFirstByXPath("//select[@id='j4u-items-per-page']");
-                	itemsPerPage.setSelectedAttribute("-1", true);
-                	webClient.waitForBackgroundJavaScript(10000);
-                    try {
-						couponsAdded += addAllCouponTypes(couponCenterPage);
-					} catch (IOException e) {
-						e.printStackTrace();
-						updateStatus("Error adding coupons from Coupon Center Page");
-					}
-                }*/
-                /*
-                try {
-					logout(couponCenterPage);
-				} catch (IOException e) {
-					e.printStackTrace();
-					updateStatus("Error logging out");
-				}*/
-                
                 updateStatus("Closing windows..");
                 webClient.closeAllWindows();
                 updateStatus("Done, added: " + couponsAdded + " coupons.");
