@@ -129,7 +129,7 @@ public class WebCrawler extends Observable implements Runnable {
                 webClient.closeAllWindows();
                 updateStatus("Done, added: " + couponsAdded + " coupons.");
             } else {
-                updateStatus("Couldn't log in with username: " + username + "and password: " + password);
+                updateStatus("Wrong username or password");
             }
         } else {
             updateStatus("Couldn't access Safeway's login site");
@@ -244,8 +244,16 @@ public class WebCrawler extends Observable implements Runnable {
     	username = newUsername;
     }
     
+    public String getUsername() {
+    	return username;
+    }
+    
     public void setPassword(String newPassword) {
     	password = newPassword;
+    }
+    
+    public String getPassword() {
+    	return password;
     }
     
     public void setRunning(boolean newValue) {
