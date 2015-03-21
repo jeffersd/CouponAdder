@@ -1,6 +1,11 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -115,7 +120,24 @@ public class WebCrawlerTest {
 	
 	/**
 	 * Tests the primary method by running the webcrawler.
-	 * No exceptions mean a succssesful test.
+	 * No exceptions means a successful test.
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws FailingHttpStatusCodeException 
+	 */
+	@Test
+	public void addAllCouponsTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
+		WebCrawler WC = new WebCrawler();
+		WC.addAllCoupons();
+		assertFalse(WC.loggedIn);
+		WC.setPassword("Curtis.120391");
+		WC.setUsername("dillon.jeffers@gmail.com");
+		WC.addAllCoupons();
+		assertTrue(WC.loggedIn);
+	}
+	
+	/**
+	 * Tests the primary method by running the webcrawler.
 	 */
 	@Test
 	public void runTest() {

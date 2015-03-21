@@ -1,9 +1,11 @@
 package model;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Observable;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -32,7 +34,7 @@ public class WebCrawler extends Observable implements Runnable {
     
     private String username;
     private String password;
-    private boolean loggedIn;
+    public boolean loggedIn;
     private boolean running;
     
     public final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
@@ -51,39 +53,27 @@ public class WebCrawler extends Observable implements Runnable {
     
     /**
      * The main method that adds all of the coupons.
+     * @throws IOException 
+     * @throws MalformedURLException 
+     * @throws FailingHttpStatusCodeException 
      */
-    public void addAllCoupons() {
+    public void addAllCoupons() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
     	updateStatus("Initializing..");
     	int couponsAdded = 0;
-        HtmlPage mainPage;
-		try {
-			mainPage = webClient.getPage(LOGIN_URL);
-		} catch (Exception e) {
-			updateStatus("Error opening login page");
-			return;
-		} 
+        final HtmlPage mainPage;
+        mainPage = webClient.getPage(LOGIN_URL);
         if (mainPage.getTitleText().equals(SIGNIN_TITLE)) {
-            HtmlPage loggedInPage;
-			try {
-				loggedInPage = login(mainPage, username, password);
-			} catch (IOException e2) {
-				updateStatus("Error logging in");
-				return;
-			}
+            final HtmlPage loggedInPage = login(mainPage, username, password);
             if (loggedInPage.getTitleText().equals(MAIN_TITLE)) {
                 loggedIn = true;
                 updateStatus("Logged in");
                 addCouponsFromPage(PERSONALIZED_URL, PERSONALIZED_PAGE_TITLE);
                 addCouponsFromPage(COUPON_URL, COUPON_PAGE_TITLE);
-                try {
-					logout(loggedInPage);
-				} catch (IOException e) {
-					//e.printStackTrace();
-					updateStatus("Error logging out.");
-				}
+				logout(loggedInPage);
                 webClient.closeAllWindows();
                 updateStatus("Done, added: " + couponsAdded + " coupons.");
             } else {
+            	loggedIn = false;
                 updateStatus("Wrong username or password");
             }
         } else {
@@ -95,35 +85,25 @@ public class WebCrawler extends Observable implements Runnable {
     	final HtmlPage page;
     	int couponsAdded = 0;
 		try {
-			//updateStatus("Going to " + pageName + " page..");
 			page = webClient.getPage(url);
 		} catch (Exception e1) {
-			//e1.printStackTrace();
 			//updateStatus("Error loading " + pageName + " Page.");
 			return -1;
 		}
         webClient.waitForBackgroundJavaScript(10000);
         if (page.getTitleText().equals(title)) {
-        	//updateStatus("At " + pageName + " page");
         	HtmlSelect itemsPerPage = page.getFirstByXPath(COUPONS_PER_PAGE_XPATH);
         	itemsPerPage.setSelectedAttribute("-1", true);
         	webClient.waitForBackgroundJavaScript(10000);
             try {
 				couponsAdded = addAllCouponTypes(page);
 			} catch (IOException e) {
-				//e.printStackTrace();
 				//updateStatus("Error adding coupons from " + pageName + " page");
 				couponsAdded = -1;
 			}
         } else {
         	couponsAdded = -1;
         }
-//        try {
-//			//logout(page);
-//		} catch (IOException e) {
-//			//e.printStackTrace();
-//			updateStatus("Error logging out");
-//		}
         return couponsAdded;
     }
 
@@ -139,18 +119,18 @@ public class WebCrawler extends Observable implements Runnable {
      */
     public HtmlPage login(HtmlPage page, String username, String password) throws IOException {
     	updateStatus("Logging in..");
-    	HtmlForm loginForm = page.getFormByName("Login");
+    	final HtmlForm loginForm = page.getFormByName("Login");
     	if (loginForm == null) {
     		return null;
     	}
-        HtmlTextInput userIdField = loginForm.getInputByName("userId");
-        HtmlPasswordInput passwordField = loginForm.getInputByName("IDToken2");
+        final HtmlTextInput userIdField = loginForm.getInputByName("userId");
+        final HtmlPasswordInput passwordField = loginForm.getInputByName("IDToken2");
         if (userIdField == null || passwordField == null) {
         	return null;
         }
         userIdField.type(username);
         passwordField.type(password);
-        HtmlAnchor signInButton = (HtmlAnchor) loginForm
+        final HtmlAnchor signInButton = (HtmlAnchor) loginForm
                 .getFirstByXPath("//a[@id='SignInBtn']");
         if (signInButton == null) {
             return null;
@@ -260,7 +240,15 @@ public class WebCrawler extends Observable implements Runnable {
 	@Override
 	public void run() {
 		setRunning(true);
-		addAllCoupons();
+		try {
+			addAllCoupons();
+		} catch (FailingHttpStatusCodeException e) {
+			updateStatus("Http Status Code Error");
+		} catch (MalformedURLException e) {
+			updateStatus("Malformed Url Error");
+		} catch (IOException e) {
+			updateStatus("IO Error");
+		}
 		setRunning(false);
 	}
 
