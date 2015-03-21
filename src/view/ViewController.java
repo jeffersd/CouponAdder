@@ -50,7 +50,8 @@ public class ViewController extends JFrame implements Observer {
 	 *            want to test.
 	 */
 	public ViewController() {
-		model = new WebCrawler(this); // send down self as observer
+		model = new WebCrawler();
+		model.addObserver(this);
 		JFrame frame = new JFrame();
 		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		frame.setSize(viewWidth, viewHeight);
