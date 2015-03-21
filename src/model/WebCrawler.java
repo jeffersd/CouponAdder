@@ -3,8 +3,6 @@ package model;
 import java.io.IOException;
 import java.util.Observable;
 
-import view.ViewController;
-
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
@@ -39,8 +37,7 @@ public class WebCrawler extends Observable implements Runnable {
     
     public final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_24);
 
-    public WebCrawler(ViewController observer) {
-    	addObserver(observer);
+    public WebCrawler() {
     	java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
                 java.util.logging.Level.OFF);
         java.util.logging.Logger.getLogger("org.apache").setLevel(
@@ -158,8 +155,11 @@ public class WebCrawler extends Observable implements Runnable {
         if (signInButton == null) {
             return null;
         } else {
-        	loggedIn = true; // wrong?
-        	return signInButton.click();
+        	final HtmlPage loggedInPage = signInButton.click();
+        	if (loggedInPage != null) {
+        		loggedIn = true;
+        	}
+        	return loggedInPage;
         }
     }
 
