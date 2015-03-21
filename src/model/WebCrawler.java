@@ -23,14 +23,15 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
  * 
  */
 public class WebCrawler extends Observable implements Runnable {
-    private static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
-    public static final String PERSONALIZED_PAGE = "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
-    public static final String COUPON_PAGE = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
+    public static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
+    public static final String PERSONALIZED_URL = "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
+    public static final String COUPON_URL = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
     public static final String SIGNIN_TITLE = "Safeway - Sign In";
-    public static final String MAIN_TITLE = "Safeway - Sign In";
-    public static final String COUPON_PAGE_TITLE = "Safeway - Sign In";
-    public static final String PERSONALIZED_PAGE_TITLE = "Safeway - Sign In";
+    public static final String MAIN_TITLE = "Safeway - Official Site";
+    public static final String COUPON_PAGE_TITLE = "Safeway - Coupon Center";
+    public static final String PERSONALIZED_PAGE_TITLE = "Safeway - Personalized Deals";
     public static final String COUPONS_PER_PAGE_XPATH = "//select[@id='j4u-items-per-page']";
+    
     private String username;
     private String password;
     private boolean loggedIn;
@@ -75,8 +76,8 @@ public class WebCrawler extends Observable implements Runnable {
             if (loggedInPage.getTitleText().equals(MAIN_TITLE)) {
                 loggedIn = true;
                 updateStatus("Logged in");
-                addCouponsFromPage(PERSONALIZED_PAGE, PERSONALIZED_PAGE_TITLE);
-                addCouponsFromPage(COUPON_PAGE, COUPON_PAGE_TITLE);
+                addCouponsFromPage(PERSONALIZED_URL, PERSONALIZED_PAGE_TITLE);
+                addCouponsFromPage(COUPON_URL, COUPON_PAGE_TITLE);
                 try {
 					logout(loggedInPage);
 				} catch (IOException e) {
@@ -217,7 +218,6 @@ public class WebCrawler extends Observable implements Runnable {
     public HtmlPage logout(final HtmlPage page) throws IOException {
         if (loggedIn) {
             updateStatus("Logging out..");
-            //final HtmlPage loggedOffPage = clickLink(page,"//a[@href='javascript:openssoLogoff();']");
             final HtmlAnchor signOutLink = page.getAnchorByText("Sign Out");
             final HtmlPage loggedOffPage = signOutLink.click();
             if (loggedOffPage != null) {

@@ -31,12 +31,12 @@ public class WebCrawlerTest {
 		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
-		HtmlPage page = client.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		HtmlPage page = client.getPage(WebCrawler.LOGIN_URL);
 		oldPageTitle = page.getTitleText();
 		page = WC.login(page, "dillon.jeffers@gmail.com", "Curtis.120391");
 		newPageTitle = page.getTitleText();
-		assertTrue(oldPageTitle.equals("Safeway - Sign In"));
-		assertTrue(newPageTitle.equals("Safeway - Official Site"));
+		assertTrue(oldPageTitle.equals(WebCrawler.SIGNIN_TITLE));
+		assertTrue(newPageTitle.equals(WebCrawler.MAIN_TITLE));
 		assertFalse(oldPageTitle.equals(newPageTitle));
 	}
 	
@@ -52,14 +52,14 @@ public class WebCrawlerTest {
 		WebCrawler WC = view.model;
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
-		HtmlPage page = WC.webClient.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		HtmlPage page = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		HtmlPage failedLogout = WC.logout(page);
 		assertNull(failedLogout);
 		oldPageTitle = page.getTitleText();
 		page = WC.login(page, "dillon.jeffers@gmail.com", "Curtis.120391");
 		newPageTitle = page.getTitleText();
-		assertTrue(oldPageTitle.equals("Safeway - Sign In"));
-		assertTrue(newPageTitle.equals("Safeway - Official Site"));
+		assertTrue(oldPageTitle.equals(WebCrawler.SIGNIN_TITLE));
+		assertTrue(newPageTitle.equals(WebCrawler.MAIN_TITLE));
 		// logged in
 		oldPageTitle = page.getTitleText();
 		page = WC.logout(page);
@@ -129,14 +129,14 @@ public class WebCrawlerTest {
 	public void addAllCouponsFromPageTest() throws IOException {
 		ViewController view = new ViewController();
 		WebCrawler WC = view.model;
-		final HtmlPage loginPage = WC.webClient.getPage("https://www.safeway.com/ShopStores/OSSO-Login.page");
+		final HtmlPage loginPage = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		final HtmlPage page = WC.login(loginPage, "dillon.jeffers@gmail.com", "Curtis.120391");
 		assertNotNull(page);
-		WC.addCouponsFromPage(WebCrawler.PERSONALIZED_PAGE, WebCrawler.PERSONALIZED_PAGE_TITLE);
-		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.PERSONALIZED_PAGE, WebCrawler.PERSONALIZED_PAGE_TITLE);
+		WC.addCouponsFromPage(WebCrawler.PERSONALIZED_URL, WebCrawler.PERSONALIZED_PAGE_TITLE);
+		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.PERSONALIZED_URL, WebCrawler.PERSONALIZED_PAGE_TITLE);
 		assertEquals(0, shouldBeZero);
-		WC.addCouponsFromPage(WebCrawler.COUPON_PAGE, WebCrawler.COUPON_PAGE_TITLE);
-		shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_PAGE, WebCrawler.COUPON_PAGE_TITLE);
+		WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
+		shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
 		assertEquals(0, shouldBeZero);
 	}
 	
