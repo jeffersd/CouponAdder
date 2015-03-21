@@ -115,14 +115,13 @@ public class WebCrawlerTest {
 	
 	/**
 	 * Tests the primary method by running the webcrawler.
+	 * No exceptions mean a succssesful test.
 	 */
 	@Test
 	public void runTest() {
 		WebCrawler WC = new WebCrawler();
 		assertFalse(WC.getRunning());
 		WC.run();
-		assertTrue(WC.getRunning());
-		// no exceptions mean a successful test
 	}
 	
 	/**
