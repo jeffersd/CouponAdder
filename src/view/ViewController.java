@@ -114,10 +114,12 @@ public class ViewController extends JFrame implements Observer {
 		JLabel label = new JLabel(labelText);
 		panel.add(label);
 	}
-	
+
 	/**
 	 * Transforms a character array to a string
-	 * @param charArray the character array
+	 * 
+	 * @param charArray
+	 *            the character array
 	 * @return a string
 	 */
 	public String charArrayToString(char[] charArray) {
@@ -127,7 +129,7 @@ public class ViewController extends JFrame implements Observer {
 		}
 		return newString;
 	}
-	
+
 	/**
 	 * Sends the model the username and password from the gui fields.
 	 */
@@ -135,52 +137,58 @@ public class ViewController extends JFrame implements Observer {
 		model.setUsername(getUsernameField());
 		model.setPassword(getPasswordField());
 	}
-	
+
 	/**
-	 * Sets the value of the username field.
-	 * Used for testing to keep the fields private.
-	 * @param newUsername The new username for the field.
+	 * Sets the value of the username field. Used for testing to keep the fields
+	 * private.
+	 * 
+	 * @param newUsername
+	 *            The new username for the field.
 	 */
 	public void setUsernameField(String newUsername) {
 		usernameField.setText(newUsername);
 	}
-	
+
 	/**
 	 * Used for testing to keep the field private.
+	 * 
 	 * @return The text value of the field.
 	 */
 	public String getUsernameField() {
 		return usernameField.getText();
 	}
-	
+
 	/**
 	 * Used for testing to keep the field private.
+	 * 
 	 * @return The text value of the field.
 	 */
 	public String getPasswordField() {
 		char[] charArray = passwordField.getPassword();
 		return charArrayToString(charArray);
 	}
-	
+
 	/**
-	 * Sets the value of the password field. 
-	 * Used for testing to keep the fields private.
+	 * Sets the value of the password field. Used for testing to keep the fields
+	 * private.
+	 * 
 	 * @param newPassword
 	 */
 	public void setPasswordField(String newPassword) {
 		passwordField.setText(newPassword);
 	}
-	
+
 	/**
 	 * Listener for the add all coupons button.
+	 * 
 	 * @author dillon
 	 *
 	 */
 	public class AddCouponsButtonActionListener implements ActionListener {
-		
+
 		/**
-		 * The method that runs after the user presses 'add all coupons'.
-		 * If one is not running, it starts running the model as a new thread.
+		 * The method that runs after the user presses 'add all coupons'. If one
+		 * is not running, it starts running the model as a new thread.
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -195,7 +203,7 @@ public class ViewController extends JFrame implements Observer {
 		}
 
 	}
-	
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		statusArea.setText((String) arg1);
