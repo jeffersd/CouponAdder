@@ -151,16 +151,13 @@ public class WebCrawlerTest {
 	 * @throws IOException 
 	 */
 	@Test
-	public void addAllCouponsFromPageTest() throws IOException {
+	public void addCouponsFromPageTest() throws IOException {
 		WebCrawler WC = new WebCrawler();
 		final HtmlPage loginPage = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		final HtmlPage page = WC.login(loginPage, "***REMOVED***", "***REMOVED***");
 		assertNotNull(page);
-		WC.addCouponsFromPage(WebCrawler.PERSONALIZED_URL, WebCrawler.PERSONALIZED_PAGE_TITLE);
-		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.PERSONALIZED_URL, WebCrawler.PERSONALIZED_PAGE_TITLE);
-		assertEquals(0, shouldBeZero);
 		WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
-		shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
+		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
 		assertEquals(0, shouldBeZero);
 	}
 	
