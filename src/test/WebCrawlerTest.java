@@ -14,9 +14,7 @@ import model.WebCrawler;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class WebCrawlerTest {
@@ -30,10 +28,9 @@ public class WebCrawlerTest {
 	@Test
 	public void loginTest() throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		WebCrawler WC = new WebCrawler();
-		final WebClient client = new WebClient(BrowserVersion.INTERNET_EXPLORER_11);
 		String oldPageTitle = "title";
 		String newPageTitle = "title";
-		HtmlPage page = client.getPage(WebCrawler.LOGIN_URL);
+		HtmlPage page = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		oldPageTitle = page.getTitleText();
 		page = WC.login(page, "***REMOVED***", "***REMOVED***");
 		newPageTitle = page.getTitleText();
@@ -156,12 +153,10 @@ public class WebCrawlerTest {
 		final HtmlPage loginPage = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		final HtmlPage page = WC.login(loginPage, "***REMOVED***", "***REMOVED***");
 		assertNotNull(page);
-		WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
+		assertNotEquals(-1, WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE));
 		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
 		assertEquals(0, shouldBeZero);
 	}
 	
 	
-	
-
 }

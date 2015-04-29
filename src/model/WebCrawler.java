@@ -24,17 +24,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
  */
 public class WebCrawler extends Observable implements Runnable {
 	public static final String LOGIN_URL = "https://www.safeway.com/ShopStores/OSSO-Login.page";
-	// public static final String PERSONALIZED_URL =
-	// "https://www.safeway.com/ShopStores/Justforu-PersonalizedDeals.page";
 	public static final String COUPON_URL = "https://www.safeway.com/ShopStores/Justforu-CouponCenter.page";
 	public static final String SIGNIN_TITLE = "Safeway - Sign In";
 	public static final String MAIN_TITLE = "Safeway - Official Site";
-	// public static final String COUPON_PAGE_TITLE = "Safeway - Coupon Center";
 	public static final String COUPON_PAGE_TITLE = "Safeway - Coupons & Deals";
-	// public static final String PERSONALIZED_PAGE_TITLE =
-	// "Safeway - Personalized Deals";
-	// public static final String COUPONS_PER_PAGE_XPATH =
-	// "//select[@id='j4u-items-per-page']";
 
 	private String username;
 	private String password;
@@ -76,7 +69,12 @@ public class WebCrawler extends Observable implements Runnable {
 				addCouponsFromPage(COUPON_URL, COUPON_PAGE_TITLE);
 				logout(loggedInPage);
 				webClient.closeAllWindows();
-				updateStatus("Done, added: " + couponsAdded + " coupons.");
+				if (couponsAdded == -1) {
+					updateStatus("Error adding coupons.");
+				} else {
+					updateStatus("Done, added: " + couponsAdded + " coupons.");
+				}
+				
 			} else {
 				loggedIn = false;
 				updateStatus("Wrong username or password");
@@ -101,32 +99,6 @@ public class WebCrawler extends Observable implements Runnable {
 			e.printStackTrace();
 			return -1;
 		}
-		
-//		final HtmlPage page;
-//		int couponsAdded = 0;
-//		try {
-//			page = webClient.getPage(url);
-//		} catch (Exception e1) {
-//			// updateStatus("Error loading " + pageName + " Page.");
-//			return -1;
-//		}
-//		webClient.waitForBackgroundJavaScript(10000);
-//		if (page.getTitleText().equals(title)) {
-//			// HtmlSelect itemsPerPage =
-//			// page.getFirstByXPath(COUPONS_PER_PAGE_XPATH);
-//			// itemsPerPage.setSelectedAttribute("-1", true);
-//			// webClient.waitForBackgroundJavaScript(10000);
-//			try {
-//				couponsAdded = addAllCouponTypes(page);
-//			} catch (IOException e) {
-//				// updateStatus("Error adding coupons from " + pageName +
-//				// " page");
-//				couponsAdded = -1;
-//			}
-//		} else {
-//			couponsAdded = -1;
-//		}
-//		return couponsAdded;
 	}
 
 	/**
@@ -192,9 +164,7 @@ public class WebCrawler extends Observable implements Runnable {
 
 	private int addAllCouponTypes(HtmlPage page) throws IOException {
 		updateStatus("Looking for coupons..");
-		// int couponsAdded = 0;
 		String couponXpathDivClass = "//div[@class='lt-offer-not-added']";
-		//String couponXpathDivClass = "//div[@class='float-left ng-scope']";
 		return addAllCoupons(page, couponXpathDivClass);
 	}
 
@@ -202,19 +172,21 @@ public class WebCrawler extends Observable implements Runnable {
 		List<?> list = page.getByXPath(xpath);
 		for (Object objectFromList : list) {
 			DomNode couponNode = (DomNode) objectFromList;
-			HtmlAnchor addAnchor = couponNode.getFirstByXPath("//a[@class='lt-offer-Clip ng-scope']");
-			HtmlSpan addSpan = addAnchor.getFirstByXPath("//span");
+			HtmlAnchor addAnchor = couponNode
+					.getFirstByXPath("//a[@class='lt-offer-Clip ng-scope']");
+			HtmlSpan addSpan = addAnchor
+					.getFirstByXPath("//span[contains(., 'Add')]");
 			page = addSpan.click();
 			webClient.waitForBackgroundJavaScript(10000);
+
+			String couponTitle = addAnchor.getAttribute("title").substring(4);
+//			DomNode lastAdded = page.getFirstByXPath("//div[@class='lt-offer-added']//a/span[contains(.,'" + couponTitle + "')]");
+//			if (lastAdded == null) {
+//				return -1;
+//			}
 			
-			String couponTitle = addAnchor.getAttribute("title");
-			HtmlAnchor lastCouponAdded = page.getFirstByXPath("//div[@class='lt-offer-added']//a[@class='lt-offer-Clip ng-scope']");
-			if (lastCouponAdded == null || !lastCouponAdded.getAttribute("title").equals(couponTitle)) {
-				return -1;
-			}
-			updateStatus("Added: " + couponTitle.substring(4));
+			updateStatus("Added: " + couponTitle);
 		}
-		//webClient.waitForBackgroundJavaScript(10000);
 		return list.size();
 	}
 
