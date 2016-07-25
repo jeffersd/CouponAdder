@@ -18,6 +18,8 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class WebCrawlerTest {
+        private static void TEST_USERNAME = System.getenv("SAFEWAY_USERNAME");
+        private static void TEST_PASSWORD = System.getenv("SAFEWAY_PASSWORD");
 
 	/**
 	 * Tests logging into a page.
@@ -32,7 +34,7 @@ public class WebCrawlerTest {
 		String newPageTitle = "title";
 		HtmlPage page = WC.webClient.getPage(WebCrawler.LOGIN_URL);
 		oldPageTitle = page.getTitleText();
-		page = WC.login(page, "***REMOVED***", "***REMOVED***");
+		page = WC.login(page, TEST_USERNAME, TEST_PASSWORD);
 		newPageTitle = page.getTitleText();
 		assertTrue(oldPageTitle.equals(WebCrawler.SIGNIN_TITLE));
 		assertTrue(newPageTitle.equals(WebCrawler.MAIN_TITLE));
@@ -54,7 +56,7 @@ public class WebCrawlerTest {
 		HtmlPage failedLogout = WC.logout(page);
 		assertNull(failedLogout);
 		oldPageTitle = page.getTitleText();
-		page = WC.login(page, "***REMOVED***", "***REMOVED***");
+		page = WC.login(page, TEST_USERNAME, TEST_PASSWORD);
 		newPageTitle = page.getTitleText();
 		assertTrue(oldPageTitle.equals(WebCrawler.SIGNIN_TITLE));
 		assertTrue(newPageTitle.equals(WebCrawler.MAIN_TITLE));
@@ -127,8 +129,8 @@ public class WebCrawlerTest {
 		WebCrawler WC = new WebCrawler();
 		WC.addAllCoupons();
 		assertFalse(WC.loggedIn);
-		WC.setPassword("***REMOVED***");
-		WC.setUsername("***REMOVED***");
+		WC.setPassword(TEST_PASSWORD);
+		WC.setUsername(TEST_USERNAME);
 		WC.addAllCoupons();
 		assertTrue(WC.loggedIn);
 	}
@@ -151,7 +153,7 @@ public class WebCrawlerTest {
 	public void addCouponsFromPageTest() throws IOException {
 		WebCrawler WC = new WebCrawler();
 		final HtmlPage loginPage = WC.webClient.getPage(WebCrawler.LOGIN_URL);
-		final HtmlPage page = WC.login(loginPage, "***REMOVED***", "***REMOVED***");
+		final HtmlPage page = WC.login(loginPage, TEST_USERNAME, TEST_PASSWORD);
 		assertNotNull(page);
 		assertNotEquals(-1, WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE));
 		int shouldBeZero = WC.addCouponsFromPage(WebCrawler.COUPON_URL, WebCrawler.COUPON_PAGE_TITLE);
